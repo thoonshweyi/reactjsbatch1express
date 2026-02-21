@@ -30,7 +30,11 @@ const dirname = path.dirname(filepath);
 
 
 
-app.use(cors());
+app.use(cors({
+     origin: ['https://reactoneshop.netlify.app/','http://localhost:5173'],
+     methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
+     allowedHeader: ["Content-Type","Authorization"]
+}));
 app.use(express.json());
 
 const stripe = Stripe('sk_test_51SIu70H9Bv5kOs06ajRZHudn7H0MDjmDH0iNIKaQzWLNvrXs9XMvN2Sy9fgPblusoYHWQ9AfT5MQdTZZo4HHCeJu008iNiD1LQ');
@@ -76,15 +80,15 @@ const ClientsSayDatas = [
      },
 ];
 
-app.listen(PORT,()=>{
-     console.log(`Express Server is runing on http://localhost:${PORT}`)
-});
+// health check (useful for deployment testing)
+app.get("/health",(req,res)=>res.json({ok:true}))
 
-// All todos
-
+// Aboutus Page
 app.get('/api/aboutus',(req,res)=>{
      res.json(aboutUsDatas);
 });
+
+
 
 // Contact Page
 // http://localhost:5000/api/contacts/clientsays
@@ -185,3 +189,5 @@ app.post("/api/payments/bank",upload.single('bankslip'),(req,res)=>{
      res.json({message:"Slip uploaded successfully",orderData})
 });
 
+// Listen Must be last
+app.listen(PORT,()=>  console.log(`Express Server is runing on http://localhost:${PORT}`));
